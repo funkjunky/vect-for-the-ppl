@@ -1,0 +1,10 @@
+.Palette {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+
+.Palette > span {
+  border: dotted 1px gray;
+}

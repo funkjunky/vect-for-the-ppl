@@ -1,0 +1,16 @@
+.Controls {
+  border: dotted red 1px; 
+
+}
+
+.buttons {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+}
+
+.buttons button {
+  padding: 10px;
+  margin: 10px;
+}

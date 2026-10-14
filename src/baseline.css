@@ -1,0 +1,12 @@
+button {
+  font-family: monospace;
+  font-size: 24px;
+}
+
+fieldset {
+  text-align: left;
+}
+
+canvas {
+  border: solid 1px green;
+}
