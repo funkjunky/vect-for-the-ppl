@@ -6,7 +6,7 @@ function Palette({ colours }) {
   );
   return (<div className="Palette">
     {colours.map(colour =>
-      <ColourSpan colour={colour} />
+      <ColourSpan colour={colour} key={colour} />
     )}
   </div>);
 }
