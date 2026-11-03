@@ -6,6 +6,8 @@ import { TYPE } from './elements.js';
 function Canvas({ elements }) {
   useEffect(() => {
     const ctx = document.getElementsByTagName('canvas')[0].getContext('2d');
+    ctx.canvas.width  = window.getComputedStyle(ctx.canvas).width.match(/\d+/)[0]
+    ctx.canvas.height  = window.getComputedStyle(ctx.canvas).height.match(/\d+/)[0]
     ctx.clearRect(0, 0, 2000, 2000); // TODO: be less lazy
     console.log('elements: ', elements);
     elements.forEach(({ type, attrs }) => {
