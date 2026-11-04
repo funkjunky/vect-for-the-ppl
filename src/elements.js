@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { createEnum } from './common.js';
 
-export const TYPE = ['line', 'square', 'circle'].reduce((types, t) => { types[t] = t; return types; }, {});
+//export const TYPE = ['line', 'square', 'circle'].reduce((types, t) => { types[t] = t; return types; }, {});
+export const TYPE = createEnum(['line', 'square', 'circle']);
 
 export const createLine = (p1, p2) => createElement(TYPE.line, { p1, p2 }); 
 export const createSquare = (x, y, width, height) => createElement(TYPE.square, { x, y, width, height });
@@ -23,10 +25,12 @@ export const elementsSlice = createSlice({
   name: 'elements',
   initialState: sampleShapes,
   reducers: {
-    add: (state, { payload }) => state.push(payload),
-    update: (state, { payload }) => state[state.findIndex(({ id }) => id === payload.id)] = payload, //TODO: will redux recognize the alterati
+    add: (state, { payload }) => void state.push(payload),
+    update: (state, { payload }) => void (state[state.findIndex(({ id }) => id === payload.id)] = payload), //TODO: will redux recognize
     remove: (state, { payload }) => void state.splice(state.findIndex(element => element.id === payload.id), 1),
   },
 });
+
+export const { add, update, remove } = elementsSlice.actions;
 
 export default elementsSlice.reducer;
