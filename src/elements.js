@@ -1,12 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createEnum } from './common.js';
 
-//export const TYPE = ['line', 'square', 'circle'].reduce((types, t) => { types[t] = t; return types; }, {});
-export const TYPE = createEnum(['line', 'square', 'circle']);
+export const TYPE = createEnum(['line', 'square', 'circle', 'filledSquare', 'filledCircle']);
 
 export const createLine = (p1, p2) => createElement(TYPE.line, { p1, p2 }); 
 export const createSquare = (x, y, width, height) => createElement(TYPE.square, { x, y, width, height });
 export const createCircle = (x, y, radius) => createElement(TYPE.circle, { x, y, radius });
+export const createFilledSquare = (x, y, width, height) => createElement(TYPE.filledSquare, { x, y, width, height });
+export const createFilledCircle = (x, y, radius) => createElement(TYPE.filledCircle, { x, y, radius });
 
 let idSeed = 0;
 export const createElement = (type, attrs) => ({

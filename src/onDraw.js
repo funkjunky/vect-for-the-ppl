@@ -7,6 +7,18 @@ export const drawLine = (ctx, p1, p2) => {
   ctx.stroke();
 };
 
+export const strokeCircle = (ctx, x, y, radius) => {
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.stroke();
+};
+
+export const fillCircle = (ctx, x, y, radius) => {
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fill();
+};
+
 const onDraw = (ctx, elements) => {
   ctx.clearRect(0, 0, 2000, 2000); // TODO: be less lazy
   elements.forEach(({ type, attrs }) => {
@@ -17,10 +29,14 @@ const onDraw = (ctx, elements) => {
       case TYPE.square:
         ctx.strokeRect(attrs.x, attrs.y, attrs.width, attrs.height);
         break;
+      case TYPE.filledSquare:
+        ctx.fillRect(attrs.x, attrs.y, attrs.width, attrs.height);
+        break;
       case TYPE.circle:
-        ctx.beginPath();
-        ctx.arc(attrs.x, attrs.y, attrs.radius, 0, Math.PI * 2);
-        ctx.stroke();
+        strokeCircle(ctx, attrs.x, attrs.y, attrs.radius);
+        break;
+      case TYPE.filledCircle:
+        fillCircle(ctx, attrs.x, attrs.y, attrs.radius);
         break;
       default: console.warn('invalid element type. Element: ', elements);
     }

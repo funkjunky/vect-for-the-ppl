@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createEnum } from './common.js';
 
-export const TOOLS = createEnum(['selection', 'line', 'square', 'circle']);
+export const TOOLS = createEnum(['selection', 'line', 'square', 'circle', 'filledSquare', 'filledCircle']);
 
 export const toolSelectedSlice = createSlice({
   name: 'toolSelected',
