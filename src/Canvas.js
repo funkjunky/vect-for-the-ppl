@@ -2,7 +2,7 @@ import { legacy_connect as connect } from 'react-redux'
 import { useEffect, useState } from 'react';
 
 import onDraw, { drawLine, strokeCircle, fillCircle } from './onDraw.js';
-import { add, createSquare, createCircle, createLine, createFilledCircle, createFilledSquare } from './elements.js';
+import { addElement, createSquare, createCircle, createLine, createFilledCircle, createFilledSquare } from './elements.js';
 import { TOOLS } from './toolSelected.js';
 
 const getLineLength = (a, b) => {
@@ -11,7 +11,7 @@ const getLineLength = (a, b) => {
   return Math.sqrt(x*x + y*y);
 };
 
-function Canvas({ elements, toolSelected, add }) {
+function Canvas({ elements, toolSelected, addElement }) {
   const [dragStart, setDragStart] = useState(null);
   const [xy, setXY] = useState({x:0, y:0});
   console.log('elements: ', toolSelected, elements);
@@ -69,30 +69,30 @@ function Canvas({ elements, toolSelected, add }) {
 
     switch(toolSelected.current) {
       case TOOLS.line:
-        add(createLine(dragStart, xy));
+        addElement(createLine(dragStart, xy));
         break;
 
       case TOOLS.square:
         const width = xy.x - dragStart.x;
         const height = xy.y - dragStart.y;
-        add(createSquare(dragStart.x, dragStart.y, width, height));
+        addElement(createSquare(dragStart.x, dragStart.y, width, height));
         break;
 
       case TOOLS.filledSquare: {
         const width = xy.x - dragStart.x;
         const height = xy.y - dragStart.y;
-        add(createFilledSquare(dragStart.x, dragStart.y, width, height));
+        addElement(createFilledSquare(dragStart.x, dragStart.y, width, height));
         break;
       }
       case TOOLS.circle: {
         const radius = getLineLength(dragStart, xy);
-        add(createCircle(dragStart.x, dragStart.y, radius));
+        addElement(createCircle(dragStart.x, dragStart.y, radius));
         break;
       }
 
       case TOOLS.filledCircle:
         const radius = getLineLength(dragStart, xy);
-        add(createFilledCircle(dragStart.x, dragStart.y, radius));
+        addElement(createFilledCircle(dragStart.x, dragStart.y, radius));
         break;
 
       default: console.warn('no tool on mouse up', toolSelected);
@@ -120,4 +120,4 @@ function Canvas({ elements, toolSelected, add }) {
 }
 
 
-export default connect(({ elements, toolSelected }) => ({ elements, toolSelected }), { add })(Canvas);
+export default connect(({ elements, toolSelected }) => ({ elements, toolSelected }), { addElement })(Canvas);

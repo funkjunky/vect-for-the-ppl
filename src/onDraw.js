@@ -22,6 +22,10 @@ export const fillCircle = (ctx, x, y, radius) => {
 const onDraw = (ctx, elements) => {
   ctx.clearRect(0, 0, 2000, 2000); // TODO: be less lazy
   elements.forEach(({ type, attrs }) => {
+    ctx.save();
+    if(attrs.strokeStyle) ctx.strokeStyle = attrs.strokeStyle;
+    if(attrs.colourLink) ctx.fillStyle = attrs.strokeStyle;
+    else if(attrs.fillStyle) ctx.fillStyle = attrs.fillStyle;
     switch (type) {
       case TYPE.line:
         drawLine(ctx, attrs.p1, attrs.p2);
@@ -40,6 +44,7 @@ const onDraw = (ctx, elements) => {
         break;
       default: console.warn('invalid element type. Element: ', elements);
     }
+    ctx.restore();
   });
 };
 

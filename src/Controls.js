@@ -1,14 +1,17 @@
 import { legacy_connect as connect } from 'react-redux'
 
-import { changeTool, TOOLS } from './toolSelected';
+import { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, TOOLS } from './toolSelected';
 import Palette from './Palette.js';
 
 import './Controls.css';
 
-function Controls({ toolSelected, changeTool }) {
+function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyle, changeFillStyle }) {
+  const LinkCheckbox = ({ ...props }) => (
+    <input type="checkbox" onChange={({ target }) => changeColourLink(target.checked)} checked={toolSelected.colourLink} {...props} />
+  );
+
   return (
     <div className="Controls">
-      <p>{toolSelected.mousePos.x} - {toolSelected.mousePos.y}</p>
       <div className="buttons">
         <button onClick={() => changeTool(TOOLS.selection)} style={{ backgroundColor: toolSelected.current === TOOLS.selection ? 'white' : 'grey' }} title="Selection">+</button>
         <button onClick={() => changeTool(TOOLS.line)} style={{ backgroundColor: toolSelected.current === TOOLS.line ? 'white' : 'grey' }} title="Line">/</button>
@@ -21,10 +24,15 @@ function Controls({ toolSelected, changeTool }) {
         <input type="range" min="0" max="10" />
       </fieldset>
       <fieldset className="colours"><legend>colours</legend>
-        <Palette colours={['red', 'green', 'blue', 'black', 'white']} />
+        <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={toolSelected.strokeStyle} onChange={colour => changeStrokeStyle(colour)} />
+      </fieldset>
+      <fieldset className="colours"><legend>fill colours (<LinkCheckbox /> link)</legend>
+        { !toolSelected.colourLink &&
+          <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={toolSelected.fillStyle} onChange={colour => changeFillStyle(colour)} />
+        }
       </fieldset>
     </div>
   );
 }
 
-export default connect(({ toolSelected }) => ({ toolSelected }), { changeTool })(Controls);
+export default connect(({ toolSelected }) => ({ toolSelected }), { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle })(Controls);
