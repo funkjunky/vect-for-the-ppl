@@ -26,6 +26,8 @@ const onDraw = (ctx, elements) => {
     if(attrs.strokeStyle) ctx.strokeStyle = attrs.strokeStyle;
     if(attrs.colourLink) ctx.fillStyle = attrs.strokeStyle;
     else if(attrs.fillStyle) ctx.fillStyle = attrs.fillStyle;
+    if(attrs.lineWidth) ctx.lineWidth = attrs.lineWidth;
+    //ctx.lineWidth ?= attrs.lineWidth;
     switch (type) {
       case TYPE.line:
         drawLine(ctx, attrs.p1, attrs.p2);

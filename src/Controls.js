@@ -1,11 +1,11 @@
 import { legacy_connect as connect } from 'react-redux'
 
-import { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, TOOLS } from './toolSelected';
+import { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth,  TOOLS } from './toolSelected';
 import Palette from './Palette.js';
 
 import './Controls.css';
 
-function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyle, changeFillStyle }) {
+function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth }) {
   const LinkCheckbox = ({ ...props }) => (
     <input type="checkbox" onChange={({ target }) => changeColourLink(target.checked)} checked={toolSelected.colourLink} {...props} />
   );
@@ -21,7 +21,7 @@ function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyl
         <button onClick={() => changeTool(TOOLS.filledCircle)} style={{ backgroundColor: toolSelected.current === TOOLS.filledCircle ? 'white' : 'grey' }} title="Filled Circle">●</button>
       </div>
       <fieldset><legend>Line Width</legend>
-        <input type="range" min="0" max="10" />
+        2<input type="range" min="2" max="42" step="4" value={toolSelected.lineWidth} onChange={({ target: { value }}) => changeLineWidth(value)} />42
       </fieldset>
       <fieldset className="colours"><legend>colours</legend>
         <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={toolSelected.strokeStyle} onChange={colour => changeStrokeStyle(colour)} />
@@ -35,4 +35,4 @@ function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyl
   );
 }
 
-export default connect(({ toolSelected }) => ({ toolSelected }), { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle })(Controls);
+export default connect(({ toolSelected }) => ({ toolSelected }), { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth })(Controls);
