@@ -1,6 +1,9 @@
+textarea {
+  width: 100%;
+}
+
 .Controls {
   border: dotted red 1px; 
-
 }
 
 .buttons {

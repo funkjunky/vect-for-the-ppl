@@ -5,7 +5,6 @@ export const TYPE = createEnum(['text', 'line', 'square', 'circle', 'filledSquar
 
 export const createText = (x, y, text, measureTextResult) => {
   const { width, height } = measureTextResult;
-  console.log('measureTextResult: ', width, height, measureTextResult);
   return createElement(TYPE.text, { x, y, text, width, height });
 }
 export const createLine = (p1, p2, props) => createElement(TYPE.line, { p1, p2, ...props }); 

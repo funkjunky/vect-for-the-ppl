@@ -1,11 +1,13 @@
 import { legacy_connect as connect } from 'react-redux'
+import { useState } from 'react';
 
-import { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth,  TOOLS } from './toolSelected';
+import { TYPE, update } from './elements.js';
+import { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, setText, TOOLS } from './toolSelected';
 import Palette from './Palette.js';
 
 import './Controls.css';
 
-function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth }) {
+function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, setText, update }) {
   const LinkCheckbox = ({ ...props }) => (
     <input type="checkbox" onChange={({ target }) => changeColourLink(target.checked)} checked={toolSelected.colourLink} {...props} />
   );
@@ -21,6 +23,16 @@ function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyl
         <button onClick={() => changeTool(TOOLS.circle)} style={{ backgroundColor: toolSelected.current === TOOLS.circle ? 'white' : 'grey' }} title="Circle">○</button>
         <button onClick={() => changeTool(TOOLS.filledCircle)} style={{ backgroundColor: toolSelected.current === TOOLS.filledCircle ? 'white' : 'grey' }} title="Filled Circle">●</button>
       </div>
+      {(toolSelected.current === TOOLS.text || (toolSelected.current === TOOLS.selection && toolSelected.selection?.type === TYPE.text)) &&
+        <fieldset><legend>Element Properties</legend>
+          <fieldset><legend>Text</legend>
+            <textarea value={toolSelected.text} onChange={({ target }) => {
+              setText(target.value);
+              if (toolSelected.current === TOOLS.selection) update({ id: toolSelected.selection.id, attrs: { text: target.value } });
+            }} autoFocus />
+          </fieldset>
+        </fieldset>
+      }
       <fieldset><legend>Line Width</legend>
         2<input type="range" min="2" max="42" step="4" value={toolSelected.lineWidth} onChange={({ target: { value }}) => changeLineWidth(value)} />42
       </fieldset>
@@ -36,4 +48,4 @@ function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyl
   );
 }
 
-export default connect(({ toolSelected }) => ({ toolSelected }), { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth })(Controls);
+export default connect(({ toolSelected }) => ({ toolSelected }), { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, setText, update })(Controls);

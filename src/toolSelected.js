@@ -5,7 +5,7 @@ export const TOOLS = createEnum(['selection', 'text', 'line', 'square', 'circle'
 
 export const toolSelectedSlice = createSlice({
   name: 'toolSelected',
-  initialState: { current: TOOLS.line, strokeStyle: 'black', colourLink: false, fillStyle: 'green', lineWidth: 2 },
+  initialState: { current: TOOLS.line, strokeStyle: 'black', colourLink: false, fillStyle: 'green', lineWidth: 2, text: '' },
   reducers: {
     changeTool: (state, { payload }) => void (state.current = payload),
     changeStrokeStyle: (state, { payload }) => void (state.strokeStyle = payload),
@@ -13,9 +13,10 @@ export const toolSelectedSlice = createSlice({
     changeColourLink: (state, { payload }) => void (state.colourLink = payload),
     changeLineWidth: (state, { payload }) => void (state.lineWidth = payload),
     setSelection: (state, { payload }) => void (state.selection = payload),
+    setText: (state, { payload }) => void (state.text = payload),
   },
 });
 
-export const { changeTool, changeStrokeStyle, changeFillStyle, changeColourLink, changeLineWidth, setSelection } = toolSelectedSlice.actions;
+export const { changeTool, changeStrokeStyle, changeFillStyle, changeColourLink, changeLineWidth, setSelection, setText } = toolSelectedSlice.actions;
 
 export default toolSelectedSlice.reducer;

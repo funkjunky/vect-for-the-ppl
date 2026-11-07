@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import onDraw, { drawElement, drawLine, strokeCircle, fillCircle } from './onDraw.js';
 import { TYPE, update, addElement, createText, createSquare, createCircle, createLine, createFilledCircle, createFilledSquare } from './elements.js';
-import { TOOLS, setSelection } from './toolSelected.js';
+import { TOOLS, setSelection, setText } from './toolSelected.js';
 
 const getLineLength = (a, b) => {
   const x = b.x - a.x;
@@ -33,7 +33,7 @@ const findShape = (cursor, elements) => {
   return selectedShape;
 };
 
-function Canvas({ elements, toolSelected, addElement, setSelection, update }) {
+function Canvas({ elements, toolSelected, addElement, setSelection, update, setText }) {
   const [dragStart, setDragStart] = useState(null);
 
   const onMouseDown = e => {
@@ -116,13 +116,16 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update }) {
         } else {
           attrs = { x: xy.x, y: xy.y };
         }
+        if (toolSelected.selection.type === TYPE.text) {
+          setText(toolSelected.selection.attrs.text);
+        }
         update({ id: toolSelected.selection.id, attrs });
         break;
       case TOOLS.text:
-        const text = 'hello world'; //TODO: add ability to enter own text
+        const text = toolSelected.text;
         const ctx = document.getElementsByTagName('canvas')[0].getContext('2d');
         const measureTextResult = ctx.measureText(text);
-        measureTextResult.height = measureTextResult.actualBoundingBoxAscent; //add a better named variable
+        measureTextResult.height = measureTextResult.actualBoundingBoxDescent; //warning: based on baseline
         addElement(createText(xy.x, xy.y, text, measureTextResult));
         break;
       case TOOLS.line:
@@ -177,4 +180,4 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update }) {
 }
 
 
-export default connect(({ elements, toolSelected }) => ({ elements, toolSelected }), { addElement, setSelection, update })(Canvas);
+export default connect(({ elements, toolSelected }) => ({ elements, toolSelected }), { addElement, setSelection, update, setText })(Canvas);
