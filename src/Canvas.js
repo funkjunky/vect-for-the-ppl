@@ -1,9 +1,9 @@
 import { legacy_connect as connect } from 'react-redux'
 import { useEffect, useState } from 'react';
 
-import onDraw, { drawLine, strokeCircle, fillCircle } from './onDraw.js';
-import { addElement, createSquare, createCircle, createLine, createFilledCircle, createFilledSquare } from './elements.js';
-import { TOOLS } from './toolSelected.js';
+import onDraw, { drawElement, drawLine, strokeCircle, fillCircle } from './onDraw.js';
+import { TYPE, update, addElement, createSquare, createCircle, createLine, createFilledCircle, createFilledSquare } from './elements.js';
+import { TOOLS, setSelection } from './toolSelected.js';
 
 const getLineLength = (a, b) => {
   const x = b.x - a.x;
@@ -11,25 +11,58 @@ const getLineLength = (a, b) => {
   return Math.sqrt(x*x + y*y);
 };
 
-function Canvas({ elements, toolSelected, addElement }) {
+const findShape = (cursor, elements) => {
+  const selectedShape = elements.find(({ type, attrs }) => {
+    switch(type) {
+      case TYPE.square:
+      case TYPE.filledSquare:
+        return cursor.x > attrs.x && cursor.x < attrs.x+attrs.width && cursor.y > attrs.y && cursor.y < attrs.y+attrs.height;
+      case TYPE.circle:
+      case TYPE.filledCircle:
+        return getLineLength(cursor, attrs) < attrs.radius;
+      case TYPE.line:
+        const THRESHOLD = 1;
+        return Math.abs(getLineLength(attrs.p1, cursor)
+          + getLineLength(cursor, attrs.p2)
+          - getLineLength(attrs.p1, attrs.p2)) < THRESHOLD;
+      default: return console.warn('no element type when finding shape');
+    };
+  });
+  console.log('selected: ', selectedShape);
+  return selectedShape;
+};
+
+function Canvas({ elements, toolSelected, addElement, setSelection, update }) {
   const [dragStart, setDragStart] = useState(null);
-  const [xy, setXY] = useState({x:0, y:0});
-  console.log('elements: ', toolSelected, elements);
 
   const onMouseDown = e => {
     setDragStart(getMousePos(e));
+    if(toolSelected.current === TOOLS.selection) {
+      setSelection(findShape(getMousePos(e), elements));
+    }
   };
 
   const onMouseMove = e => {
     if(dragStart !== null) {
       const xy = getMousePos(e);
-      setXY(xy);
 
       const ctx = document.getElementsByTagName('canvas')[0].getContext('2d');
       onDraw(ctx, elements);
       ctx.strokeStyle = "grey";
       ctx.fillStyle = "grey";
       switch(toolSelected.current) {
+        case TOOLS.selection:
+          const { type, attrs } = toolSelected.selection;
+          const delta = { x: xy.x - dragStart.x, y: xy.y - dragStart.y };
+          if (toolSelected.selection.type === TYPE.line) {
+            drawElement(ctx, { type, attrs: { ...attrs,
+              p1: { x: attrs.p1.x + delta.x, y: attrs.p1.y + delta.y },
+              p2: { x: attrs.p2.x + delta.x, y: attrs.p2.y + delta.y },
+            } } );
+          } else {
+            drawElement(ctx, { type, attrs: { ...attrs, x: xy.x, y: xy.y } } );
+          }
+          break;
         case TOOLS.line:
           drawLine(ctx, dragStart, xy);
           break;
@@ -68,6 +101,20 @@ function Canvas({ elements, toolSelected, addElement }) {
     const xy = getMousePos(e);
 
     switch(toolSelected.current) {
+      case TOOLS.selection:
+        let attrs; // TODO: I don't like using let.... I can avoid it...
+        if (toolSelected.selection.type === TYPE.line) {
+          const { attrs: { p1, p2 } } = toolSelected.selection;
+          const delta = { x: xy.x - dragStart.x, y: xy.y - dragStart.y };
+          attrs = {
+            p1: { x: p1.x + delta.x, y: p1.y + delta.y },
+            p2: { x: p2.x + delta.x, y: p2.y + delta.y },
+          };
+        } else {
+          attrs = { x: xy.x, y: xy.y };
+        }
+        update({ id: toolSelected.selection.id, attrs });
+        break;
       case TOOLS.line:
         addElement(createLine(dragStart, xy));
         break;
@@ -120,4 +167,4 @@ function Canvas({ elements, toolSelected, addElement }) {
 }
 
 
-export default connect(({ elements, toolSelected }) => ({ elements, toolSelected }), { addElement })(Canvas);
+export default connect(({ elements, toolSelected }) => ({ elements, toolSelected }), { addElement, setSelection, update })(Canvas);

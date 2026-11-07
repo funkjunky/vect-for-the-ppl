@@ -27,7 +27,12 @@ export const elementsSlice = createSlice({
   initialState: sampleShapes,
   reducers: {
     add: (state, { payload }) => void state.push(payload),
-    update: (state, { payload }) => void (state[state.findIndex(({ id }) => id === payload.id)] = payload), //TODO: will redux recognize
+    update: (state, { payload: { id: pid, attrs } }) => {
+      const element = state[state.findIndex(({ id }) => pid === id)];
+      Object.entries(attrs).forEach(([k, v]) => {
+        element.attrs[k] = v;
+      });
+    }, //TODO: will redux recognize
     remove: (state, { payload }) => void state.splice(state.findIndex(element => element.id === payload.id), 1),
   },
 });
@@ -36,8 +41,8 @@ export const { add, update, remove } = elementsSlice.actions;
 
 export const addElement = element => (dispatch, getState) => {
   element.attrs = { ...element.attrs, ...getState().toolSelected }; //TODO: lazy... we only need certain attrs from toolSelected
-  console.log('the element: ', element);
   dispatch(add(element));
+  console.log('added element: ', element);
 };
 
 export default elementsSlice.reducer;

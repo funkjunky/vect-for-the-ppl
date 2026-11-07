@@ -19,33 +19,40 @@ export const fillCircle = (ctx, x, y, radius) => {
   ctx.fill();
 };
 
+export const drawElement = (ctx, { type, attrs }) => {
+  switch (type) {
+    case TYPE.line:
+      drawLine(ctx, attrs.p1, attrs.p2);
+      break;
+    case TYPE.square:
+      ctx.strokeRect(attrs.x, attrs.y, attrs.width, attrs.height);
+      break;
+    case TYPE.filledSquare:
+      ctx.fillRect(attrs.x, attrs.y, attrs.width, attrs.height);
+      break;
+    case TYPE.circle:
+      strokeCircle(ctx, attrs.x, attrs.y, attrs.radius);
+      break;
+    case TYPE.filledCircle:
+      fillCircle(ctx, attrs.x, attrs.y, attrs.radius);
+      break;
+    default: console.warn('invalid element type. type: ', type);
+  }
+};
+
 const onDraw = (ctx, elements) => {
   ctx.clearRect(0, 0, 2000, 2000); // TODO: be less lazy
-  elements.forEach(({ type, attrs }) => {
+  elements.forEach(element => {
+    const { attrs } = element;
     ctx.save();
     if(attrs.strokeStyle) ctx.strokeStyle = attrs.strokeStyle;
     if(attrs.colourLink) ctx.fillStyle = attrs.strokeStyle;
     else if(attrs.fillStyle) ctx.fillStyle = attrs.fillStyle;
     if(attrs.lineWidth) ctx.lineWidth = attrs.lineWidth;
     //ctx.lineWidth ?= attrs.lineWidth;
-    switch (type) {
-      case TYPE.line:
-        drawLine(ctx, attrs.p1, attrs.p2);
-        break;
-      case TYPE.square:
-        ctx.strokeRect(attrs.x, attrs.y, attrs.width, attrs.height);
-        break;
-      case TYPE.filledSquare:
-        ctx.fillRect(attrs.x, attrs.y, attrs.width, attrs.height);
-        break;
-      case TYPE.circle:
-        strokeCircle(ctx, attrs.x, attrs.y, attrs.radius);
-        break;
-      case TYPE.filledCircle:
-        fillCircle(ctx, attrs.x, attrs.y, attrs.radius);
-        break;
-      default: console.warn('invalid element type. Element: ', elements);
-    }
+
+    drawElement(ctx, element);
+
     ctx.restore();
   });
 };
