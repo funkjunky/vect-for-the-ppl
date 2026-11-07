@@ -53,6 +53,7 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update }) {
       ctx.fillStyle = "grey";
       switch(toolSelected.current) {
         case TOOLS.selection:
+          if (!toolSelected.selection) break;
           const { type, attrs } = toolSelected.selection;
           const delta = { x: xy.x - dragStart.x, y: xy.y - dragStart.y };
           if (toolSelected.selection.type === TYPE.line) {
@@ -103,6 +104,7 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update }) {
 
     switch(toolSelected.current) {
       case TOOLS.selection:
+        if (!toolSelected.selection) break;
         let attrs; // TODO: I don't like using let.... I can avoid it...
         if (toolSelected.selection.type === TYPE.line) {
           const { attrs: { p1, p2 } } = toolSelected.selection;
