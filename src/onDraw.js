@@ -21,6 +21,9 @@ export const fillCircle = (ctx, x, y, radius) => {
 
 export const drawElement = (ctx, { type, attrs }) => {
   switch (type) {
+    case TYPE.text:
+      ctx.fillText(attrs.text, attrs.x, attrs.y);
+      break;
     case TYPE.line:
       drawLine(ctx, attrs.p1, attrs.p2);
       break;
@@ -42,6 +45,7 @@ export const drawElement = (ctx, { type, attrs }) => {
 
 const onDraw = (ctx, elements) => {
   ctx.clearRect(0, 0, 2000, 2000); // TODO: be less lazy
+  ctx.textBaseline = 'hanging';
   elements.forEach(element => {
     const { attrs } = element;
     ctx.save();

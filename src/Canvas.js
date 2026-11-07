@@ -2,7 +2,7 @@ import { legacy_connect as connect } from 'react-redux'
 import { useEffect, useState } from 'react';
 
 import onDraw, { drawElement, drawLine, strokeCircle, fillCircle } from './onDraw.js';
-import { TYPE, update, addElement, createSquare, createCircle, createLine, createFilledCircle, createFilledSquare } from './elements.js';
+import { TYPE, update, addElement, createText, createSquare, createCircle, createLine, createFilledCircle, createFilledSquare } from './elements.js';
 import { TOOLS, setSelection } from './toolSelected.js';
 
 const getLineLength = (a, b) => {
@@ -14,6 +14,7 @@ const getLineLength = (a, b) => {
 const findShape = (cursor, elements) => {
   const selectedShape = elements.find(({ type, attrs }) => {
     switch(type) {
+      case TYPE.text:
       case TYPE.square:
       case TYPE.filledSquare:
         return cursor.x > attrs.x && cursor.x < attrs.x+attrs.width && cursor.y > attrs.y && cursor.y < attrs.y+attrs.height;
@@ -114,6 +115,13 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update }) {
           attrs = { x: xy.x, y: xy.y };
         }
         update({ id: toolSelected.selection.id, attrs });
+        break;
+      case TOOLS.text:
+        const text = 'hello world'; //TODO: add ability to enter own text
+        const ctx = document.getElementsByTagName('canvas')[0].getContext('2d');
+        const measureTextResult = ctx.measureText(text);
+        measureTextResult.height = measureTextResult.actualBoundingBoxAscent; //add a better named variable
+        addElement(createText(xy.x, xy.y, text, measureTextResult));
         break;
       case TOOLS.line:
         addElement(createLine(dragStart, xy));

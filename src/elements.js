@@ -1,8 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createEnum } from './common.js';
 
-export const TYPE = createEnum(['line', 'square', 'circle', 'filledSquare', 'filledCircle']);
+export const TYPE = createEnum(['text', 'line', 'square', 'circle', 'filledSquare', 'filledCircle']);
 
+export const createText = (x, y, text, measureTextResult) => {
+  const { width, height } = measureTextResult;
+  console.log('measureTextResult: ', width, height, measureTextResult);
+  return createElement(TYPE.text, { x, y, text, width, height });
+}
 export const createLine = (p1, p2, props) => createElement(TYPE.line, { p1, p2, ...props }); 
 export const createSquare = (x, y, width, height, props) => createElement(TYPE.square, { x, y, width, height, ...props });
 export const createCircle = (x, y, radius, props) => createElement(TYPE.circle, { x, y, radius, ...props });

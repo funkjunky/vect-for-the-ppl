@@ -13,7 +13,8 @@ function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyl
   return (
     <div className="Controls">
       <div className="buttons">
-        <button onClick={() => changeTool(TOOLS.selection)} style={{ backgroundColor: toolSelected.current === TOOLS.selection ? 'white' : 'grey' }} title="Selection">+</button>
+        <button onClick={() => changeTool(TOOLS.selection)} style={{ backgroundColor: toolSelected.current === TOOLS.selection ? 'white' : 'grey' }} title="Selection">✥</button>
+        <button onClick={() => changeTool(TOOLS.text)} style={{ backgroundColor: toolSelected.current === TOOLS.text ? 'white' : 'grey' }} title="Text">Ⅰ</button>
         <button onClick={() => changeTool(TOOLS.line)} style={{ backgroundColor: toolSelected.current === TOOLS.line ? 'white' : 'grey' }} title="Line">/</button>
         <button onClick={() => changeTool(TOOLS.square)} style={{ backgroundColor: toolSelected.current === TOOLS.square ? 'white' : 'grey' }} title="Square">□</button>
         <button onClick={() => changeTool(TOOLS.filledSquare)} style={{ backgroundColor: toolSelected.current === TOOLS.filledSquare ? 'white' : 'grey' }} title="Filled Square">■</button>
