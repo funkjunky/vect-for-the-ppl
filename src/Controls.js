@@ -1,51 +1,52 @@
-import { legacy_connect as connect } from 'react-redux'
-import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 
 import { TYPE, update } from './elements.js';
-import { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, setText, TOOLS } from './toolSelected';
+import { changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, setText, TOOLS } from './toolSelected';
+import ToolButton from './ToolButton.js';
+import DispatchingRange from './DispatchingRange.js';
 import Palette from './Palette.js';
 
 import './Controls.css';
 
-function Controls({ toolSelected, changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, setText, update }) {
-  const LinkCheckbox = ({ ...props }) => (
-    <input type="checkbox" onChange={({ target }) => changeColourLink(target.checked)} checked={toolSelected.colourLink} {...props} />
-  );
+function Controls() {
+  const d = useDispatch();
+  const { current, text, lineWidth, strokeStyle, fillStyle, colourLink, selection } = useSelector(({ toolSelected }) => toolSelected);
+
+  const LinkCheckbox = <input type="checkbox" onChange={({ target }) => changeColourLink(target.checked)} checked={colourLink} />
 
   return (
     <div className="Controls">
       <div className="buttons">
-        <button onClick={() => changeTool(TOOLS.selection)} style={{ backgroundColor: toolSelected.current === TOOLS.selection ? 'white' : 'grey' }} title="Selection">✥</button>
-        <button onClick={() => changeTool(TOOLS.text)} style={{ backgroundColor: toolSelected.current === TOOLS.text ? 'white' : 'grey' }} title="Text">Ⅰ</button>
-        <button onClick={() => changeTool(TOOLS.line)} style={{ backgroundColor: toolSelected.current === TOOLS.line ? 'white' : 'grey' }} title="Line">/</button>
-        <button onClick={() => changeTool(TOOLS.square)} style={{ backgroundColor: toolSelected.current === TOOLS.square ? 'white' : 'grey' }} title="Square">□</button>
-        <button onClick={() => changeTool(TOOLS.filledSquare)} style={{ backgroundColor: toolSelected.current === TOOLS.filledSquare ? 'white' : 'grey' }} title="Filled Square">■</button>
-        <button onClick={() => changeTool(TOOLS.circle)} style={{ backgroundColor: toolSelected.current === TOOLS.circle ? 'white' : 'grey' }} title="Circle">○</button>
-        <button onClick={() => changeTool(TOOLS.filledCircle)} style={{ backgroundColor: toolSelected.current === TOOLS.filledCircle ? 'white' : 'grey' }} title="Filled Circle">●</button>
+        <ToolButton tool={TOOLS.selection}>✥</ToolButton>
+        <ToolButton tool={TOOLS.text}>Ⅰ</ToolButton>
+        <ToolButton tool={TOOLS.line}>/</ToolButton>
+        <ToolButton tool={TOOLS.square}>□</ToolButton>
+        <ToolButton tool={TOOLS.filledSquare}>■</ToolButton>
+        <ToolButton tool={TOOLS.circle}>○</ToolButton>
+        <ToolButton tool={TOOLS.filledCircle}>●</ToolButton>
       </div>
-      {(toolSelected.current === TOOLS.text || (toolSelected.current === TOOLS.selection && toolSelected.selection?.type === TYPE.text)) &&
-        <fieldset><legend>Element Properties</legend>
+      <div className="properties">
+        <p>Element Properties</p>
+        {(current === TOOLS.text || (current === TOOLS.selection && selection?.type === TYPE.text)) &&
           <fieldset><legend>Text</legend>
-            <textarea value={toolSelected.text} onChange={({ target }) => {
-              setText(target.value);
-              if (toolSelected.current === TOOLS.selection) update({ id: toolSelected.selection.id, attrs: { text: target.value } });
+            <textarea value={text} onChange={({ target }) => {
+              d(setText(target.value));
+              if (current === TOOLS.selection) d(update({ id: selection.id, attrs: { text: target.value } }));
             }} autoFocus />
           </fieldset>
-        </fieldset>
-      }
-      <fieldset><legend>Line Width</legend>
-        2<input type="range" min="2" max="42" step="4" value={toolSelected.lineWidth} onChange={({ target: { value }}) => changeLineWidth(value)} />42
-      </fieldset>
-      <fieldset className="colours"><legend>colours</legend>
-        <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={toolSelected.strokeStyle} onChange={colour => changeStrokeStyle(colour)} />
-      </fieldset>
-      <fieldset className="colours"><legend>fill colours (<LinkCheckbox /> link)</legend>
-        { !toolSelected.colourLink &&
-          <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={toolSelected.fillStyle} onChange={colour => changeFillStyle(colour)} />
         }
-      </fieldset>
+        <DispatchingRange min="2" max="42" step="4" value={lineWidth} action={changeLineWidth} label="Line Width" />
+        <fieldset className="colours"><legend>colours</legend>
+          <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={strokeStyle} onChange={colour => d(changeStrokeStyle(colour))} />
+        </fieldset>
+        <fieldset className="colours"><legend>fill colours ({LinkCheckbox} link)</legend>
+          { !colourLink &&
+            <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={fillStyle} onChange={colour => d(changeFillStyle(colour))} />
+          }
+        </fieldset>
+      </div>
     </div>
   );
 }
 
-export default connect(({ toolSelected }) => ({ toolSelected }), { changeTool, changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, setText, update })(Controls);
+export default Controls;
