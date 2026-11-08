@@ -37,11 +37,11 @@ function Controls() {
           </fieldset>
         }
         {(current === TOOLS.selection && selection) &&
-            <fieldset><legend>Depth - {elements.findIndex(({id}) => id === selection.id) + 1} out of {elements.length}</legend>
-            <button onClick={() => d(shiftTop(selection))}>^^ | top</button>
-            <button onClick={() => d(shiftUp(selection))}>^ | up</button>
-            <button onClick={() => d(shiftDown(selection))}>v | down</button>
-            <button onClick={() => d(shiftBottom(selection))}>vv | bottom</button>
+          <fieldset><legend>Depth - {elements.findIndex(({id}) => id === selection.id) + 1} out of {elements.length}</legend>
+            <button onClick={() => d(shiftTop(selection))}>⤒</button>
+            <button onClick={() => d(shiftUp(selection))}>↑</button>
+            <button onClick={() => d(shiftDown(selection))}>↓</button>
+            <button onClick={() => d(shiftBottom(selection))}>⤓</button>
           </fieldset>
         }
         <DispatchingRange min="2" max="42" step="4" value={lineWidth} action={changeLineWidth} label="Line Width" />
