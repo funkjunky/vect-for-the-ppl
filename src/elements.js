@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { createEnum } from './common.js';
+import { createEnum, getLineLength } from './common.js';
 
 export const TYPE = createEnum(['text', 'line', 'square', 'circle', 'filledSquare', 'filledCircle']);
 
@@ -7,12 +7,15 @@ export const createText = (x, y, text, measureTextResult) => {
   const { width, height } = measureTextResult;
   return createElement(TYPE.text, { x, y, text, width, height });
 }
-export const createLine = (p1, p2, props) => createElement(TYPE.line, { p1, p2, ...props }); 
-export const createSquare = (x, y, width, height, props) => createElement(TYPE.square, { x, y, width, height, ...props });
-export const createCircle = (x, y, radius, props) => createElement(TYPE.circle, { x, y, radius, ...props });
-export const createFilledSquare = (x, y, width, height, props) => createElement(TYPE.filledSquare, { x, y, width, height, ...props });
-export const createFilledCircle = (x, y, radius, props) => createElement(TYPE.filledCircle, { x, y, radius, ...props });
 
+// These functions take arguments and throw them into the attrs object. This lessens object-key bloat.
+export const createLine = (p1, p2, props) => createElement(TYPE.line, { p1, p2, ...props }); 
+export const createSquare = (x, y, width, height, props, filled) =>
+  createElement(filled ? TYPE.filledSquare : TYPE.square, { x, y, width, height, ...props });
+export const createCircle = (x, y, radius, props, filled) =>
+  createElement(filled ? TYPE.filledCircle : TYPE.circle, { x, y, radius, ...props });
+
+// Adds the id and removes obj-key bloat for type and attrs.
 let idSeed = 0;
 export const createElement = (type, attrs) => ({
   id: ++idSeed,
@@ -47,6 +50,27 @@ export const addElement = element => (dispatch, getState) => {
   element.attrs = { ...element.attrs, ...getState().toolSelected }; //TODO: lazy... we only need certain attrs from toolSelected
   dispatch(add(element));
   console.log('added element: ', element);
+};
+
+export const getElementsPointTouches = (point, elements) => {
+  const elementsTouching = elements.find(({ type, attrs }) => {
+    switch(type) {
+      case TYPE.text:
+      case TYPE.square:
+      case TYPE.filledSquare:
+        return point.x > attrs.x && point.x < attrs.x+attrs.width && point.y > attrs.y && point.y < attrs.y+attrs.height;
+      case TYPE.circle:
+      case TYPE.filledCircle:
+        return getLineLength(point, attrs) < attrs.radius;
+      case TYPE.line:
+        const THRESHOLD = 1;
+        return Math.abs(getLineLength(attrs.p1, point)
+          + getLineLength(point, attrs.p2)
+          - getLineLength(attrs.p1, attrs.p2)) < THRESHOLD;
+      default: return console.warn('no element type when finding shape');
+    };
+  });
+  return elementsTouching;
 };
 
 export default elementsSlice.reducer;

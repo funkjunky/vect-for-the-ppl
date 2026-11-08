@@ -2,36 +2,9 @@ import { legacy_connect as connect } from 'react-redux'
 import { useEffect, useState } from 'react';
 
 import onDraw, { drawElement, drawLine, strokeCircle, fillCircle } from './onDraw.js';
-import { TYPE, update, addElement, createText, createSquare, createCircle, createLine, createFilledCircle, createFilledSquare } from './elements.js';
+import { getElementsPointTouches, TYPE, update, addElement, createText, createSquare, createCircle, createLine } from './elements.js';
 import { TOOLS, setSelection, setText } from './toolSelected.js';
-
-const getLineLength = (a, b) => {
-  const x = b.x - a.x;
-  const y = b.y - a.y;
-  return Math.sqrt(x*x + y*y);
-};
-
-const findShape = (cursor, elements) => {
-  const selectedShape = elements.find(({ type, attrs }) => {
-    switch(type) {
-      case TYPE.text:
-      case TYPE.square:
-      case TYPE.filledSquare:
-        return cursor.x > attrs.x && cursor.x < attrs.x+attrs.width && cursor.y > attrs.y && cursor.y < attrs.y+attrs.height;
-      case TYPE.circle:
-      case TYPE.filledCircle:
-        return getLineLength(cursor, attrs) < attrs.radius;
-      case TYPE.line:
-        const THRESHOLD = 1;
-        return Math.abs(getLineLength(attrs.p1, cursor)
-          + getLineLength(cursor, attrs.p2)
-          - getLineLength(attrs.p1, attrs.p2)) < THRESHOLD;
-      default: return console.warn('no element type when finding shape');
-    };
-  });
-  console.log('selected: ', selectedShape);
-  return selectedShape;
-};
+import { getLineLength } from './common.js';
 
 function Canvas({ elements, toolSelected, addElement, setSelection, update, setText }) {
   const [dragStart, setDragStart] = useState(null);
@@ -39,7 +12,9 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, setT
   const onMouseDown = e => {
     setDragStart(getMousePos(e));
     if(toolSelected.current === TOOLS.selection) {
-      setSelection(findShape(getMousePos(e), elements));
+      const elementTouchingCursor = getElementsPointTouches(getMousePos(e), elements)[0];
+      setSelection(elementTouchingCursor);
+      console.log('selected: ', elementTouchingCursor);
     }
   };
 
@@ -141,7 +116,7 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, setT
       case TOOLS.filledSquare: {
         const width = xy.x - dragStart.x;
         const height = xy.y - dragStart.y;
-        addElement(createFilledSquare(dragStart.x, dragStart.y, width, height));
+        addElement(createSquare(dragStart.x, dragStart.y, width, height, 'filled'));
         break;
       }
       case TOOLS.circle: {
@@ -152,7 +127,7 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, setT
 
       case TOOLS.filledCircle:
         const radius = getLineLength(dragStart, xy);
-        addElement(createFilledCircle(dragStart.x, dragStart.y, radius));
+        addElement(createCircle(dragStart.x, dragStart.y, radius, 'filled'));
         break;
 
       default: console.warn('no tool on mouse up', toolSelected);
