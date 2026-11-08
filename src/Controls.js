@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 
-import { TYPE, update } from './elements.js';
+import { TYPE, update, shiftTop, shiftUp, shiftDown, shiftBottom } from './elements.js';
 import { changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, setText, TOOLS } from './toolSelected';
 import ToolButton from './ToolButton.js';
 import DispatchingRange from './DispatchingRange.js';
@@ -10,7 +10,8 @@ import './Controls.css';
 
 function Controls() {
   const d = useDispatch();
-  const { current, text, lineWidth, strokeStyle, fillStyle, colourLink, selection } = useSelector(({ toolSelected }) => toolSelected);
+  const { current, text, lineWidth, strokeStyle, fillStyle, colourLink, selection, selectionIndex } = useSelector(({ toolSelected }) => toolSelected);
+  const elements = useSelector(({ elements }) => elements);
 
   const LinkCheckbox = <input type="checkbox" onChange={({ target }) => changeColourLink(target.checked)} checked={colourLink} />
 
@@ -33,6 +34,14 @@ function Controls() {
               d(setText(target.value));
               if (current === TOOLS.selection) d(update({ id: selection.id, attrs: { text: target.value } }));
             }} autoFocus />
+          </fieldset>
+        }
+        {(current === TOOLS.selection && selection) &&
+            <fieldset><legend>Depth - {elements.findIndex(({id}) => id === selection.id) + 1} out of {elements.length}</legend>
+            <button onClick={() => d(shiftTop(selection))}>^^ | top</button>
+            <button onClick={() => d(shiftUp(selection))}>^ | up</button>
+            <button onClick={() => d(shiftDown(selection))}>v | down</button>
+            <button onClick={() => d(shiftBottom(selection))}>vv | bottom</button>
           </fieldset>
         }
         <DispatchingRange min="2" max="42" step="4" value={lineWidth} action={changeLineWidth} label="Line Width" />

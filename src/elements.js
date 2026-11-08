@@ -25,7 +25,7 @@ export const createElement = (type, attrs) => ({
 
 const sampleShapes = [
   createLine({ x: 20, y: 30 }, { x: 40, y: 10 }, { strokeStyle: 'green' }),
-  createSquare(40, 30, 10, 20, { strokeStyle: 'red', fillStyle: 'blue' }),
+  createSquare(40, 30, 10, 20, { strokeStyle: 'red', fillStyle: 'blue' }, 'filled'),
   createCircle(20, 10, 5),
 ];
 
@@ -41,10 +41,33 @@ export const elementsSlice = createSlice({
       });
     }, //TODO: will redux recognize
     remove: (state, { payload }) => void state.splice(state.findIndex(element => element.id === payload.id), 1),
+
+    shiftTop: (state, { payload }) => {
+      const index = state.findIndex(({ id }) => id === payload.id);
+      state.splice(index, 1);
+      state.push(payload);
+    },
+    shiftUp: (state, { payload }) => {
+      const index = state.findIndex(({ id }) => id === payload.id);
+      if (index - 1 === state.length) return; // already at top
+      state.splice(index, 1);
+      state.splice(index+1, 0, payload);
+    },
+    shiftDown: (state, { payload }) => {
+      const index = state.findIndex(({ id }) => id === payload.id);
+      if (index === 0) return; // already at bottom
+      state.splice(index, 1);
+      state.splice(index-1, 0, payload);
+    },
+    shiftBottom: (state, { payload }) => {
+      const index = state.findIndex(({ id }) => id === payload.id);
+      state.splice(index, 1);
+      state.unshift(payload);
+    },
   },
 });
 
-export const { add, update, remove } = elementsSlice.actions;
+export const { add, update, remove, shiftTop, shiftUp, shiftDown, shiftBottom } = elementsSlice.actions;
 
 export const addElement = element => (dispatch, getState) => {
   element.attrs = { ...element.attrs, ...getState().toolSelected }; //TODO: lazy... we only need certain attrs from toolSelected
@@ -53,7 +76,7 @@ export const addElement = element => (dispatch, getState) => {
 };
 
 export const getElementsPointTouches = (point, elements) => {
-  const elementsTouching = elements.find(({ type, attrs }) => {
+  const elementsTouching = elements.filter(({ type, attrs }) => {
     switch(type) {
       case TYPE.text:
       case TYPE.square:

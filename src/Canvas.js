@@ -116,7 +116,7 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, setT
       case TOOLS.filledSquare: {
         const width = xy.x - dragStart.x;
         const height = xy.y - dragStart.y;
-        addElement(createSquare(dragStart.x, dragStart.y, width, height, 'filled'));
+        addElement(createSquare(dragStart.x, dragStart.y, width, height, {}, 'filled'));
         break;
       }
       case TOOLS.circle: {
@@ -127,7 +127,7 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, setT
 
       case TOOLS.filledCircle:
         const radius = getLineLength(dragStart, xy);
-        addElement(createCircle(dragStart.x, dragStart.y, radius, 'filled'));
+        addElement(createCircle(dragStart.x, dragStart.y, radius, {}, 'filled'));
         break;
 
       default: console.warn('no tool on mouse up', toolSelected);
