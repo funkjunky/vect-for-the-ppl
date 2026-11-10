@@ -1,10 +1,11 @@
 import './Palette.css';
 
+//onChange is written in a similar way to DOM listeners w ({ target })
 function Palette({ colours, value, onChange }) {
   const ColourSpan = ({ colour }) => (
     <span
       style={{ backgroundColor: colour, border: (value === colour ? 'black 2px dotted' : 'none')}}
-      onClick={() => onChange(colour)}
+      onClick={() => onChange({ target: { value: colour }})}
     >&nbsp;</span>
   );
   return (<div className="Palette">

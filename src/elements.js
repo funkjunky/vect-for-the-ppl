@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { createEnum, getLineLength } from './common.js';
 
 export const TYPE = createEnum(['text', 'line', 'square', 'circle', 'filledSquare', 'filledCircle']);
+export const ATTRS = createEnum(['text', 'lineWidth', 'fillStyle', 'strokeStyle', 'textSize']);
 
 export const createText = (x, y, text, measureTextResult) => {
   const { width, height } = measureTextResult;

@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 
-import { TYPE, update, shiftTop, shiftUp, shiftDown, shiftBottom } from './elements.js';
-import { changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, setText, changeTextSize, TOOLS } from './toolSelected';
+import { TYPE, update, shiftTop, shiftUp, shiftDown, shiftBottom, ATTRS } from './elements.js';
+import { changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, changeText, changeTextSize, TOOLS } from './toolSelected';
 import ToolButton from './ToolButton.js';
 import DispatchingRange from './DispatchingRange.js';
 import Palette from './Palette.js';
@@ -10,10 +10,20 @@ import './Controls.css';
 
 function Controls() {
   const d = useDispatch();
-  const { current, text, lineWidth, strokeStyle, fillStyle, colourLink, selection, selectionIndex, textSize } = useSelector(({ toolSelected }) => toolSelected);
+  const toolSelected = useSelector(({ toolSelected }) => toolSelected);
+  const { current, colourLink, selection } = toolSelected;
   const elements = useSelector(({ elements }) => elements);
 
-  const LinkCheckbox = <input type="checkbox" onChange={({ target }) => changeColourLink(target.checked)} checked={colourLink} />
+  const LinkCheckbox = <input type="checkbox" onChange={({ target }) => changeColourLink(target.checked)} checked={colourLink} />;
+
+  // calls action, then if we're doing a selection, also calls the passed update function
+  const ToolOnChange = (action, attrToUpdate) => ({ target }) => {
+    if (current === TOOLS.selection && selection) d(update({ id: selection.id, attrs: { [attrToUpdate]: target.value } }));
+    else d(action(target.value));
+  }
+
+  //this sorta sucks as naming...
+  const getValue = attrKey => (current === TOOLS.selection && selection) ? selection.attrs[attrKey] : toolSelected[attrKey];
 
   return (
     <div className="Controls">
@@ -31,12 +41,11 @@ function Controls() {
         {(current === TOOLS.text || (current === TOOLS.selection && selection?.type === TYPE.text)) &&
           <div>
             <fieldset><legend>Text</legend>
-              <textarea value={text} onChange={({ target }) => {
-                d(setText(target.value));
-                if (current === TOOLS.selection) d(update({ id: selection.id, attrs: { text: target.value } }));
-              }} autoFocus />
+              <textarea value={getValue(ATTRS.text)} autoFocus
+                onChange={ToolOnChange(changeText, ATTRS.text)} />
             </fieldset>
-            <DispatchingRange min="8" max="128" step="2" value={textSize} action={changeTextSize} label="Text Size" />
+            <DispatchingRange min="8" max="128" step="2" value={getValue(ATTRS.textSize)} label="Text Size"
+              onChange={ToolOnChange(changeTextSize, ATTRS.textSize)} />
           </div>
         }
         {(current === TOOLS.selection && selection) &&
@@ -47,13 +56,16 @@ function Controls() {
             <button onClick={() => d(shiftBottom(selection))}>⤓</button>
           </fieldset>
         }
-        <DispatchingRange min="2" max="42" step="4" value={lineWidth} action={changeLineWidth} label="Line Width" />
+          <DispatchingRange min="2" max="42" step="4" value={getValue(ATTRS.lineWidth)} label="Line Width"
+            onChange={ToolOnChange(changeLineWidth, ATTRS.lineWidth)} />
         <fieldset className="colours"><legend>colours</legend>
-          <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={strokeStyle} onChange={colour => d(changeStrokeStyle(colour))} />
+          <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={getValue(ATTRS.strokeStyle)}
+            onChange={ToolOnChange(changeStrokeStyle, ATTRS.strokeStyle)} />
         </fieldset>
         <fieldset className="colours"><legend>fill colours ({LinkCheckbox} link)</legend>
           { !colourLink &&
-            <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={fillStyle} onChange={colour => d(changeFillStyle(colour))} />
+            <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={getValue(ATTRS.fillStyle)}
+              onChange={ToolOnChange(changeFillStyle, ATTRS.fillStyle)} />
           }
         </fieldset>
       </div>

@@ -14,10 +14,10 @@ export const toolSelectedSlice = createSlice({
     changeLineWidth: (state, { payload }) => void (state.lineWidth = payload),
     changeTextSize: (state, { payload }) => void (state.textSize = payload),
     setSelection: (state, { payload }) => void (state.selection = payload),
-    setText: (state, { payload }) => void (state.text = payload),
+    changeText: (state, { payload }) => void (state.text = payload),
   },
 });
 
-export const { changeTool, changeStrokeStyle, changeFillStyle, changeColourLink, changeLineWidth, setSelection, setText, changeTextSize } = toolSelectedSlice.actions;
+export const { changeTool, changeStrokeStyle, changeFillStyle, changeColourLink, changeLineWidth, setSelection, changeText, changeTextSize } = toolSelectedSlice.actions;
 
 export default toolSelectedSlice.reducer;

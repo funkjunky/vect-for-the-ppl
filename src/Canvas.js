@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 
 import onDraw, { drawElement, drawLine, strokeCircle, fillCircle } from './onDraw.js';
 import { getElementsPointTouches, TYPE, update, addElement, createText, createSquare, createCircle, createLine } from './elements.js';
-import { TOOLS, setSelection, setText } from './toolSelected.js';
+import { TOOLS, setSelection, changeText } from './toolSelected.js';
 import { getLineLength } from './common.js';
 
-function Canvas({ elements, toolSelected, addElement, setSelection, update, setText }) {
+function Canvas({ elements, toolSelected, addElement, setSelection, update, changeText }) {
   const [dragStart, setDragStart] = useState(null);
 
   const onMouseDown = e => {
@@ -92,7 +92,7 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, setT
           attrs = { x: xy.x, y: xy.y };
         }
         if (toolSelected.selection.type === TYPE.text) {
-          setText(toolSelected.selection.attrs.text);
+          changeText(toolSelected.selection.attrs.text);
         }
         update({ id: toolSelected.selection.id, attrs });
         break;
@@ -156,4 +156,4 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, setT
 }
 
 
-export default connect(({ elements, toolSelected }) => ({ elements, toolSelected }), { addElement, setSelection, update, setText })(Canvas);
+export default connect(({ elements, toolSelected }) => ({ elements, toolSelected }), { addElement, setSelection, update, changeText })(Canvas);
