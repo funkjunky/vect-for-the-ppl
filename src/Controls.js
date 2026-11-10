@@ -44,7 +44,7 @@ function Controls() {
             <button onClick={() => d(shiftBottom(selection))}>⤓</button>
           </fieldset>
         }
-        <DispatchingRange min="2" max="42" step="4" value={lineWidth} action={changeLineWidth} label="Line Width" />
+        <DispatchingRange min="2" max="42" step="4" value={lineWidth} onChange={changeLineWidth} label="Line Width" />
         <fieldset className="colours"><legend>colours</legend>
           <Palette colours={['red', 'green', 'blue', 'black', 'white']} value={strokeStyle} onChange={colour => d(changeStrokeStyle(colour))} />
         </fieldset>
