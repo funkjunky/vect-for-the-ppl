@@ -99,6 +99,7 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, setT
       case TOOLS.text:
         const text = toolSelected.text;
         const ctx = document.getElementsByTagName('canvas')[0].getContext('2d');
+        if(toolSelected.textSize) ctx.font = `${toolSelected.textSize}px serif`;
         const measureTextResult = ctx.measureText(text);
         measureTextResult.height = measureTextResult.actualBoundingBoxDescent; //warning: based on baseline
         addElement(createText(xy.x, xy.y, text, measureTextResult));

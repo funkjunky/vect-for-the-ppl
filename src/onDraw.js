@@ -22,6 +22,7 @@ export const fillCircle = (ctx, x, y, radius) => {
 export const drawElement = (ctx, { type, attrs }) => {
   switch (type) {
     case TYPE.text:
+      if(attrs.textSize) ctx.font = `${attrs.textSize}px serif`;
       ctx.fillText(attrs.text, attrs.x, attrs.y);
       break;
     case TYPE.line:
