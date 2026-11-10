@@ -37,7 +37,7 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, chan
               p2: { x: attrs.p2.x + delta.x, y: attrs.p2.y + delta.y },
             } } );
           } else {
-            drawElement(ctx, { type, attrs: { ...attrs, x: xy.x, y: xy.y } } );
+            drawElement(ctx, { type, attrs: { ...attrs, x: attrs.x + delta.x, y: attrs.y + delta.y } } );
           }
           break;
         case TOOLS.line:
@@ -80,16 +80,16 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, chan
     switch(toolSelected.current) {
       case TOOLS.selection:
         if (!toolSelected.selection) break;
-        let attrs; // TODO: I don't like using let.... I can avoid it...
+        const delta = { x: xy.x - dragStart.x, y: xy.y - dragStart.y };
+        const { attrs: { x, y, p1, p2 } } = toolSelected.selection;
+        let attrs;
         if (toolSelected.selection.type === TYPE.line) {
-          const { attrs: { p1, p2 } } = toolSelected.selection;
-          const delta = { x: xy.x - dragStart.x, y: xy.y - dragStart.y };
           attrs = {
             p1: { x: p1.x + delta.x, y: p1.y + delta.y },
             p2: { x: p2.x + delta.x, y: p2.y + delta.y },
           };
         } else {
-          attrs = { x: xy.x, y: xy.y };
+          attrs = { x: x + delta.x, y: y + delta.y };
         }
         if (toolSelected.selection.type === TYPE.text) {
           changeText(toolSelected.selection.attrs.text);
