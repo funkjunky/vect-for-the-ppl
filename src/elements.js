@@ -81,6 +81,7 @@ export const getElementsPointTouches = (point, elements) => {
   const elementsTouching = elements.filter(({ type, attrs }) => {
     switch(type) {
       case TYPE.text:
+      case TYPE.image:
       case TYPE.square:
       case TYPE.filledSquare:
         return point.x > attrs.x && point.x < attrs.x+attrs.width && point.y > attrs.y && point.y < attrs.y+attrs.height;
