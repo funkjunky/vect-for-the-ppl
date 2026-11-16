@@ -1,9 +1,23 @@
+fieldset {
+  max-height: 200px;
+  overflow: scroll;
+}
+
 textarea {
   width: 100%;
 }
 
+input[type=file] {
+  width: 100%
+}
+
+img {
+  width: 100%;
+  /*max-height: anchor-size(width); didn't work :( */
+}
+
 .Controls {
-  border: dotted red 1px; 
+  overflow: scroll;
 }
 
 .buttons {
@@ -16,4 +30,9 @@ textarea {
 .buttons button {
   padding: 10px;
   margin: 10px;
+}
+
+.remove {
+  color: white;
+  background-color: #FF3333;
 }

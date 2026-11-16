@@ -1,8 +1,8 @@
 import { legacy_connect as connect } from 'react-redux'
 import { useEffect, useState } from 'react';
 
-import onDraw, { drawElement, drawLine, strokeCircle, fillCircle } from './onDraw.js';
-import { getElementsPointTouches, TYPE, update, addElement, createText, createSquare, createCircle, createLine } from './elements.js';
+import onDraw, { drawElement, drawImage, drawLine, strokeCircle, fillCircle } from './onDraw.js';
+import { getElementsPointTouches, TYPE, update, addElement, createText, createSquare, createCircle, createLine, createImage } from './elements.js';
 import { TOOLS, setSelection, changeText } from './toolSelected.js';
 import { getLineLength } from './common.js';
 
@@ -42,6 +42,12 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, chan
           break;
         case TOOLS.line:
           drawLine(ctx, dragStart, xy);
+          break;
+
+        case TOOLS.image:
+          const ww= xy.x - dragStart.x;
+          const hh= xy.y - dragStart.y;
+          drawImage(ctx, toolSelected.imgSrc, dragStart.x, dragStart.y, ww, hh);
           break;
 
         case TOOLS.square:
@@ -104,6 +110,12 @@ function Canvas({ elements, toolSelected, addElement, setSelection, update, chan
         measureTextResult.height = measureTextResult.actualBoundingBoxDescent; //warning: based on baseline
         addElement(createText(xy.x, xy.y, text, measureTextResult));
         break;
+      case TOOLS.image: {
+        const width = xy.x - dragStart.x;
+        const height = xy.y - dragStart.y;
+        addElement(createImage(toolSelected.imgSrc, dragStart.x, dragStart.y, width, height));
+        break;
+      }
       case TOOLS.line:
         addElement(createLine(dragStart, xy));
         break;

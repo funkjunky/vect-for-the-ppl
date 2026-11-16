@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createEnum } from './common.js';
 
-export const TOOLS = createEnum(['selection', 'text', 'line', 'square', 'circle', 'filledSquare', 'filledCircle']);
+export const TOOLS = createEnum(['selection', 'image', 'text', 'line', 'square', 'circle', 'filledSquare', 'filledCircle']);
 
 export const toolSelectedSlice = createSlice({
   name: 'toolSelected',
@@ -15,9 +15,12 @@ export const toolSelectedSlice = createSlice({
     changeTextSize: (state, { payload }) => void (state.textSize = payload),
     setSelection: (state, { payload }) => void (state.selection = payload),
     changeText: (state, { payload }) => void (state.text = payload),
+    changeImgSrc: (state, { payload }) => void (state.imgSrc = payload),
   },
 });
 
-export const { changeTool, changeStrokeStyle, changeFillStyle, changeColourLink, changeLineWidth, setSelection, changeText, changeTextSize } = toolSelectedSlice.actions;
+export const {
+  changeTool, changeStrokeStyle, changeFillStyle, changeColourLink, changeLineWidth, setSelection, changeText, changeTextSize, changeImgSrc
+} = toolSelectedSlice.actions;
 
 export default toolSelectedSlice.reducer;

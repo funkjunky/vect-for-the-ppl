@@ -7,6 +7,19 @@ export const drawLine = (ctx, p1, p2) => {
   ctx.stroke();
 };
 
+const images = {};
+export const loadImage = src => {
+  if(!images[src]) {
+    images[src] = new Image();
+    images[src].onload = () => console.log('image ready: ', images[src].src);
+    images[src].src = src;
+    // TODO: put a guard against race conditions... in case someones internet is THAT slow
+  }
+};
+export const drawImage = (ctx, src, x, y, w, h) => {
+  ctx.drawImage(images[src], x, y, w, h);
+};
+
 export const strokeCircle = (ctx, x, y, radius) => {
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, Math.PI * 2);
@@ -24,6 +37,9 @@ export const drawElement = (ctx, { type, attrs }) => {
     case TYPE.text:
       if(attrs.textSize) ctx.font = `${attrs.textSize}px serif`;
       ctx.fillText(attrs.text, attrs.x, attrs.y);
+      break;
+    case TYPE.image:
+      drawImage(ctx, attrs.src, attrs.x, attrs.y, attrs.width, attrs.height);
       break;
     case TYPE.line:
       drawLine(ctx, attrs.p1, attrs.p2);

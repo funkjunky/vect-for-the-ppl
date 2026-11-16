@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createEnum, getLineLength } from './common.js';
 
-export const TYPE = createEnum(['text', 'line', 'square', 'circle', 'filledSquare', 'filledCircle']);
-export const ATTRS = createEnum(['text', 'lineWidth', 'fillStyle', 'strokeStyle', 'textSize']);
+export const TYPE = createEnum(['text', 'image', 'line', 'square', 'circle', 'filledSquare', 'filledCircle']);
+export const ATTRS = createEnum(['src', 'text', 'lineWidth', 'fillStyle', 'strokeStyle', 'textSize']);
 
 export const createText = (x, y, text, measureTextResult) => {
   const { width, height } = measureTextResult;
@@ -15,6 +15,7 @@ export const createSquare = (x, y, width, height, props, filled) =>
   createElement(filled ? TYPE.filledSquare : TYPE.square, { x, y, width, height, ...props });
 export const createCircle = (x, y, radius, props, filled) =>
   createElement(filled ? TYPE.filledCircle : TYPE.circle, { x, y, radius, ...props });
+export const createImage = (src, x, y, width, height) => createElement(TYPE.image, { src, x, y, width, height });
 
 // Adds the id and removes obj-key bloat for type and attrs.
 let idSeed = 0;
@@ -40,7 +41,7 @@ export const elementsSlice = createSlice({
       Object.entries(attrs).forEach(([k, v]) => {
         element.attrs[k] = v;
       });
-    }, //TODO: will redux recognize
+    },
     remove: (state, { payload }) => void state.splice(state.findIndex(element => element.id === payload.id), 1),
 
     shiftTop: (state, { payload }) => {

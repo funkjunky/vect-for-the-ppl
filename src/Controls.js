@@ -1,17 +1,18 @@
 import { useSelector, useDispatch } from 'react-redux'
 
-import { TYPE, update, shiftTop, shiftUp, shiftDown, shiftBottom, ATTRS } from './elements.js';
-import { changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, changeText, changeTextSize, TOOLS } from './toolSelected';
+import { TYPE, update, remove, shiftTop, shiftUp, shiftDown, shiftBottom, ATTRS } from './elements.js';
+import { changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, changeText, changeTextSize, changeImgSrc, TOOLS } from './toolSelected';
 import ToolButton from './ToolButton.js';
 import DispatchingRange from './DispatchingRange.js';
 import Palette from './Palette.js';
+import { loadImage } from './onDraw.js';
 
 import './Controls.css';
 
 function Controls() {
   const d = useDispatch();
   const toolSelected = useSelector(({ toolSelected }) => toolSelected);
-  const { current, colourLink, selection } = toolSelected;
+  const { current, colourLink, selection, imgSrc } = toolSelected;
   const elements = useSelector(({ elements }) => elements);
 
   const LinkCheckbox = <input type="checkbox" onChange={({ target }) => changeColourLink(target.checked)} checked={colourLink} />;
@@ -29,6 +30,7 @@ function Controls() {
     <div className="Controls">
       <div className="buttons">
         <ToolButton tool={TOOLS.selection}>✥</ToolButton>
+        <ToolButton tool={TOOLS.image}>𓅎</ToolButton>
         <ToolButton tool={TOOLS.text}>Ⅰ</ToolButton>
         <ToolButton tool={TOOLS.line}>/</ToolButton>
         <ToolButton tool={TOOLS.square}>□</ToolButton>
@@ -38,6 +40,16 @@ function Controls() {
       </div>
       <div className="properties">
         <p>Element Properties</p>
+        {(current === TOOLS.image || (current === TOOLS.selection && selection?.type === TYPE.image)) &&
+          <fieldset><legend>Image</legend>
+            {imgSrc && <img src={imgSrc} alt="preview" />}
+            <input type="file" onChange={({ target }) => {
+              const src = URL.createObjectURL(target.files[0]);
+              d(changeImgSrc(src))
+              loadImage(src)
+            }} accept="image/*" />
+          </fieldset>
+        }
         {(current === TOOLS.text || (current === TOOLS.selection && selection?.type === TYPE.text)) &&
           <div>
             <fieldset><legend>Text</legend>
@@ -68,6 +80,9 @@ function Controls() {
               onChange={ToolOnChange(changeFillStyle, ATTRS.fillStyle)} />
           }
         </fieldset>
+        {current === TOOLS.selection && selection &&
+          <button className="remove" onClick={() => d(remove(selection))}>Remove</button>
+        }
       </div>
     </div>
   );
