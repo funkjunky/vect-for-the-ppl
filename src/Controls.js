@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 
 import { TYPE, update, remove, shiftTop, shiftUp, shiftDown, shiftBottom, ATTRS } from './elements.js';
-import { changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, changeText, changeTextSize, changeImgSrc, TOOLS } from './toolSelected';
+import { changeColourLink, changeStrokeStyle, changeFillStyle, changeLineWidth, changeText, changeTextSize, changeImgSrc, toggleSaveAndLoad, TOOLS } from './toolSelected';
 import ToolButton from './ToolButton.js';
 import DispatchingRange from './DispatchingRange.js';
 import Palette from './Palette.js';
@@ -83,6 +83,9 @@ function Controls() {
         {current === TOOLS.selection && selection &&
           <button className="remove" onClick={() => d(remove(selection))}>Remove</button>
         }
+      </div>
+      <div>
+        <button onClick={() => d(toggleSaveAndLoad())}>Save and Load</button>
       </div>
     </div>
   );

@@ -35,6 +35,7 @@ export const elementsSlice = createSlice({
   name: 'elements',
   initialState: sampleShapes,
   reducers: {
+    load: (state, { payload }) => JSON.parse(payload),
     add: (state, { payload }) => void state.push(payload),
     update: (state, { payload: { id: pid, attrs } }) => {
       const element = state[state.findIndex(({ id }) => pid === id)];
@@ -69,7 +70,7 @@ export const elementsSlice = createSlice({
   },
 });
 
-export const { add, update, remove, shiftTop, shiftUp, shiftDown, shiftBottom } = elementsSlice.actions;
+export const { add, update, remove, shiftTop, shiftUp, shiftDown, shiftBottom, load } = elementsSlice.actions;
 
 export const addElement = element => (dispatch, getState) => {
   element.attrs = { ...element.attrs, ...getState().toolSelected }; //TODO: lazy... we only need certain attrs from toolSelected

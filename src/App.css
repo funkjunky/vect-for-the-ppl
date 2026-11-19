@@ -20,3 +20,25 @@
   height: calc(100vh - var(--double-border));
   width: calc(100vw - var(--tools-width) - var(--double-border));
 }
+
+.SaveAndLoad {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 5%;
+  bottom: 5%;
+
+  border: dotted 5px grey;
+  background-color: #CCFFFF;
+}
+
+.SaveAndLoad textarea {
+  width: 98%;
+  height: 90%;
+}
+
+.SaveAndLoad > .close {
+  position: absolute;
+  right: 5%;
+  top: 5%;
+}
